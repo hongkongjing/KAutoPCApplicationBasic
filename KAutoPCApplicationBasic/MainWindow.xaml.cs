@@ -39,5 +39,10 @@ namespace KAutoPCApplicationBasic
         {
             MainViewModels.ScreenShotOne();
         }
+
+        private void btnScreenshotAll_Click(object sender, RoutedEventArgs e)
+        {
+            MainViewModels.ScreenShotAll();
+        }
     }
 }

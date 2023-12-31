@@ -90,22 +90,35 @@ namespace KAutoPCApplicationBasic.ViewModel
         
         public void ScreenShotOne()
         {
-            CaptureScreenAsync();
+            CaptureScreenAsync(DeviceSelected.HandleWindow);
         }
         public void ScreenShotAll()
         {
-
+            List<IntPtr> source = new List<IntPtr>();
+            // Check null property
+            if (ListDevices == null) return;
+            if (ListDevices.Count == 0) return;
+            foreach (DevicesInfo device in ListDevices) { source.Add(device.HandleWindow); }
+            ParallelLoopResult result = Parallel.ForEach(
+            source, CaptureScreenAsync);
         }
-        private async void CaptureScreenAsync()
+        private async void CaptureScreenAsync(IntPtr hwnd)
         {
             await Task.Run( () =>
             {
-                    BottomStatus = "Đang chụp ảnh";
-                    // Không dùng ADB nữa
-                    //var MyImage = ADBHelper.ScreenShoot(name, true);
-                    var imageHw = ScreenCapture.GetScreenshot(DeviceSelected.HandleWindow);
-                    VisionHelper.SaveImage(imageHw);
-                    BottomStatus = "Đã chụp được ảnh";
+                BottomStatus = "Đang chụp ảnh";
+                // Không dùng ADB nữa
+                //var MyImage = ADBHelper.ScreenShoot(name, true);
+                var imageHw = ScreenCapture.GetScreenshot(hwnd);
+                if (imageHw != null)
+                {
+                    VisionHelper.SaveImage(imageHw, hwnd.ToString());
+                }
+                else
+                {
+                    BottomStatus = "Không Chụp Được ảnh";
+                }
+                    
             });
         }
         public MainViewModel()

@@ -315,7 +315,10 @@ namespace KAutoPCApplicationBasic.Utils
 
             RECT rc;
             GetWindowRect(new HandleRef(null, hwnd), out rc);
-
+            if (rc.Right == 0 && rc.Left==0)
+            {
+                return null;
+            }
             Bitmap bmp = new Bitmap(rc.Right - rc.Left, rc.Bottom - rc.Top, PixelFormat.Format32bppArgb);
             Graphics gfxBmp = Graphics.FromImage(bmp);
             IntPtr hdcBitmap;
