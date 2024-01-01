@@ -126,23 +126,23 @@ namespace KAutoPCApplicationBasic.ViewModel
             ListDevices = new ObservableCollection<DevicesInfo>();
             DeviceSelected = new DevicesInfo();
         }
-        private  void StartAuto()
+        public  void StartAuto()
         {
-            
+
             //var listproce = ScreenCapture.GetAllWindowHandleNames();
-            var nameProc = ScreenCapture.GetWindowHandle("dnplayer");
-            var image = ScreenCapture.GetScreenshot(nameProc);
-            var title = WindowHandlerHelper.GetWindowTitle(nameProc);
-            ScreenCapture.WriteBitmapToFile("C:\\Users\\Bon\\Desktop\\Result\\captureimage1.jpg", image);
+            //var nameProc = ScreenCapture.GetWindowHandle("dnplayer");
+            //var image = ScreenCapture.GetScreenshot(nameProc);
+            //var title = WindowHandlerHelper.GetWindowTitle(nameProc);
+            //ScreenCapture.WriteBitmapToFile("C:\\Users\\Bon\\Desktop\\Result\\captureimage1.jpg", image);
 
 
-            //ListPhones = new List<PhoneModel>();
-            //foreach (var item in ListDevices)
-            //{
-            //    ListPhones.Add(new PhoneModel(item));
-            //}
+            ListPhones = new List<PhoneModel>();
+            foreach (var item in ListDevices)
+            {
+                ListPhones.Add(new PhoneModel(item));
+            }
 
-            //Parallel.ForEach(ListPhones, phone => { phone.Dowork(); });
+            Parallel.ForEach(ListPhones, phone => { phone.Dowork(); });
         }
         #region PropertyChange
 

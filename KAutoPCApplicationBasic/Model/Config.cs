@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ namespace KAutoPCApplicationBasic.Model
     public class ConfigInfo
     {
         public static string SaveFilePath = AppDomain.CurrentDomain.BaseDirectory + @"\Config.json";
+        public static string ModelFilePath = AppDomain.CurrentDomain.BaseDirectory + @"\Model";
         protected readonly object _obj = new object();
 
         [JsonProperty("1.Main Directory")]
@@ -20,6 +22,8 @@ namespace KAutoPCApplicationBasic.Model
         public ConfigInfo()
         {
             if (!File.Exists(SaveFilePath)) File.Create(SaveFilePath);
+            if (!Directory.Exists(ModelFilePath)) Directory.CreateDirectory(ModelFilePath);
+           
 
 
         }
@@ -57,8 +61,8 @@ namespace KAutoPCApplicationBasic.Model
     public class Config
     {
         public static string SaveFilePath = AppDomain.CurrentDomain.BaseDirectory + @"\Config.json";
-        public static string AIModelPath { get; set; } = "C:\\Users\\Bon\\Downloads\\best2.onnx";
-        public static string[] LabelArray { get; set; } = new string[] { "Finish", "NotFinish", "Home", "Browser", "PlayStore", "SkipAd", "Switch", "SwitchClose", "ProgressBar", "Speaker", "TextCountDown" };
+        public static string AIModelPath { get; set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"Model","best.onnx");
+        public static string[] LabelArray { get; set; } = new string[] { "Finish", "NotFinish", "Home", "Browser", "PlayStore", "SkipAd", "Switch", "SwitchClose", "ProgressBar", "Speaker", "TextCountDown", "GetMoney", "OpenTreasure" };
         
     }
 }

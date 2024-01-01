@@ -139,7 +139,8 @@
                 <Grid Grid.Row="2">
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <Button
-                                
+                                x:Name="btnStart"
+                                Click="btnStart_Click"
                                 Padding="6"
                                 Content="Start"
                                 Width="150" BorderBrush="#748E63" Background="#748E63" Foreground="White"></Button>

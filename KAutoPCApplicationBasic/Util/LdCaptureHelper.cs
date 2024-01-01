@@ -309,7 +309,7 @@ namespace KAutoPCApplicationBasic.Utils
                 return string.Format(System.Globalization.CultureInfo.CurrentCulture, "{{Left={0},Top={1},Right={2},Bottom={3}}}", Left, Top, Right, Bottom);
             }
         }
-        public Bitmap GetScreenshot(IntPtr ihandle)
+        public static Bitmap GetScreenshot(IntPtr ihandle)
         {
             IntPtr hwnd = ihandle;//handle here
 

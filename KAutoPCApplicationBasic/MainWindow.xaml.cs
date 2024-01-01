@@ -44,5 +44,10 @@ namespace KAutoPCApplicationBasic
         {
             MainViewModels.ScreenShotAll();
         }
+
+        private void btnStart_Click(object sender, RoutedEventArgs e)
+        {
+            MainViewModels.StartAuto();
+        }
     }
 }
