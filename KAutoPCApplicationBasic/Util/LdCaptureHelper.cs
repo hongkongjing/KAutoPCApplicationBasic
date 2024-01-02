@@ -32,6 +32,12 @@ namespace KAutoPCApplicationBasic.Utils
             await Task.Delay(50);
             User32.SendMessage(windowHandle, User32.WindowMessage.WM_LBUTTONUP, new IntPtr(MK_LBUTTON), point.ToLParam());
         }
+        public static void ControlLClick(IntPtr windowHandle, Point point, CancellationToken cancellationToken = default)
+        {
+            User32.SendMessage(windowHandle, User32.WindowMessage.WM_LBUTTONDOWN, new IntPtr(MK_LBUTTON), point.ToLParam());
+            Thread.Sleep(50);
+            User32.SendMessage(windowHandle, User32.WindowMessage.WM_LBUTTONUP, new IntPtr(MK_LBUTTON), point.ToLParam());
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -315,10 +321,10 @@ namespace KAutoPCApplicationBasic.Utils
 
             RECT rc;
             GetWindowRect(new HandleRef(null, hwnd), out rc);
-            if (rc.Right == 0 && rc.Left==0)
-            {
-                return null;
-            }
+            //if (rc.Right == 0 && rc.Left==0)
+            //{
+            //    return null;
+            //}
             Bitmap bmp = new Bitmap(rc.Right - rc.Left, rc.Bottom - rc.Top, PixelFormat.Format32bppArgb);
             Graphics gfxBmp = Graphics.FromImage(bmp);
             IntPtr hdcBitmap;

@@ -9,8 +9,10 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using static PInvoke.User32;
 
 namespace KAutoPCApplicationBasic.ViewModel
 {
@@ -36,19 +38,20 @@ namespace KAutoPCApplicationBasic.ViewModel
                 Task.Delay(500);
                 while (true)
                 {
-                    Task.Delay(5000);
+                    Thread.Sleep(5000);
                     var matinput = Capture();
-                        var resultpredict =  yolo.Predict(matinput);
-                    if (resultpredict != null) continue;
-                    if (resultpredict?.Length == 0) continue;
+                    var resultpredict =  yolo.Predict(matinput);
+                    if (resultpredict == null) {GC.Collect(); continue; }
+                    if (resultpredict?.Length == 0) { GC.Collect(); continue; }
+                    matinput.SaveImage("C:\\Users\\Bon\\Desktop\\Result\\Screenshot" +DateTime.Now.ToString("hhmmss")+".jpg");
                     var resultpredict2 = Sort(resultpredict);
-                    if (resultpredict2.Any(x=>x.Label.Name.StartsWith("GetMoney")))
-                    {
-                        HandleClick(resultpredict2.FirstOrDefault(x => x.Label.Name.StartsWith("GetMoney")));
-                    }
-                    else if (resultpredict2.Any(x => x.Label.Name.StartsWith("OpenTreasure")))
+                    if (resultpredict2.Any(x=>x.Label.Name.StartsWith("OpenTreasure")))
                     {
                         HandleClick(resultpredict2.FirstOrDefault(x => x.Label.Name.StartsWith("OpenTreasure")));
+                    }
+                    else if (resultpredict2.Any(x => x.Label.Name.StartsWith("GetMoney")))
+                    {
+                        HandleClick(resultpredict2.FirstOrDefault(x => x.Label.Name.StartsWith("GetMoney")));
                     }
                     else if (resultpredict2.Any(x => x.Label.Name.StartsWith("SkipAd")))
                     {
@@ -62,6 +65,7 @@ namespace KAutoPCApplicationBasic.ViewModel
                     {
                         HandleClickOnPos(196,212);
                     }
+                    GC.Collect();
                 }
                 
             });
@@ -82,15 +86,15 @@ namespace KAutoPCApplicationBasic.ViewModel
         }
         public void HandleClick(Prediction predict)
         {
-            var xPos = (int)predict.Rectangle.X;
-            var yPos = (int)predict.Rectangle.Y - 34;
-            var task1 = WindowHandlerHelper.ControlLClickAsync(this.Devices.BindWindowHandle, new System.Drawing.Point(xPos, yPos));
-            task1.Wait();
+            //xPos = maxLoc.X + input.Width / 2;
+            //yPos = maxLoc.Y + input.Height / 2;
+            var xPos = (int)predict.Rectangle.X + (int)predict.Rectangle.Width/2;
+            var yPos = ((int)predict.Rectangle.Y - 34) + (int)predict.Rectangle.Height/2;
+            WindowHandlerHelper.ControlLClick(this.Devices.BindWindowHandle, new System.Drawing.Point(xPos, yPos));
         }
         public void HandleClickOnPos(int x, int y)
         {
-            var task1 = WindowHandlerHelper.ControlLClickAsync(this.Devices.BindWindowHandle, new System.Drawing.Point(x, y));
-            task1.Wait();
+            WindowHandlerHelper.ControlLClick(this.Devices.BindWindowHandle, new System.Drawing.Point(x, y));
         }
         public Prediction[] Sort(Prediction[] listPre)
         {

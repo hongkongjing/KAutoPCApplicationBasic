@@ -49,5 +49,10 @@ namespace KAutoPCApplicationBasic
         {
             MainViewModels.StartAuto();
         }
+
+        private void ntnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            MainViewModels.ListPhones.Clear();
+        }
     }
 }

@@ -99,8 +99,11 @@ namespace KAutoPCApplicationBasic.ViewModel
             if (ListDevices == null) return;
             if (ListDevices.Count == 0) return;
             foreach (DevicesInfo device in ListDevices) { source.Add(device.HandleWindow); }
-            ParallelLoopResult result = Parallel.ForEach(
-            source, CaptureScreenAsync);
+            foreach (var item in source)
+            {
+                Task.Run(() => { CaptureScreenAsync(item); });
+            }
+            
         }
         private async void CaptureScreenAsync(IntPtr hwnd)
         {

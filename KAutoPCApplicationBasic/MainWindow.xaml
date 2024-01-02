@@ -146,6 +146,7 @@
                                 Width="150" BorderBrush="#748E63" Background="#748E63" Foreground="White"></Button>
                         <Button
                             Name="ntnRefresh"
+                            Click="ntnRefresh_Click"
                                 Margin="5 0 0 0"
                                 Padding="6"
                                 Content="Refresh"
