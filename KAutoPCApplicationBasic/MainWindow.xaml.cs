@@ -52,7 +52,12 @@ namespace KAutoPCApplicationBasic
 
         private void ntnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            MainViewModels.ListPhones.Clear();
+            MainViewModels.CancelAuto();
+        }
+
+        private void btnPressESC_Click(object sender, RoutedEventArgs e)
+        {
+            MainViewModels.ESCClick();
         }
     }
 }

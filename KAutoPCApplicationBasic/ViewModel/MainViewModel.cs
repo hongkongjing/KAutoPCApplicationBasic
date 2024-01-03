@@ -1,7 +1,9 @@
 ﻿using KAutoPCApplicationBasic.Model;
 using KAutoPCApplicationBasic.Util;
 using KAutoPCApplicationBasic.Utils;
+using OpenCvSharp;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,11 +18,11 @@ namespace KAutoPCApplicationBasic.ViewModel
     public partial class MainViewModel : INotifyPropertyChanged
     {
         #region Bien
-
+        
         public ScreenCapture ScreenCapture { get; set; } = new ScreenCapture();
         public string? headerTitle = "đây là title";
         private string bottomStatus;
-
+        
         public string BottomStatus
         {
             get { return bottomStatus; }
@@ -51,6 +53,7 @@ namespace KAutoPCApplicationBasic.ViewModel
         public void HandleClick()
         { 
             var task1 = WindowHandlerHelper.ControlLClickAsync((IntPtr)2035230, new System.Drawing.Point(55, 100));
+            
             task1.Wait();
         }
 
@@ -87,7 +90,11 @@ namespace KAutoPCApplicationBasic.ViewModel
         //    }
         //    MessageBox.Show(ListDevices.Count().ToString());
         //}
-        
+        // Press ESC
+        public void ESCClick()
+        {
+            WindowHandlerHelper.SendKeyBoardPress(DeviceSelected.HandleWindow, VKeys.VK_ESCAPE);
+        }
         public void ScreenShotOne()
         {
             CaptureScreenAsync(DeviceSelected.HandleWindow);
@@ -128,7 +135,23 @@ namespace KAutoPCApplicationBasic.ViewModel
         {
             ListDevices = new ObservableCollection<DevicesInfo>();
             DeviceSelected = new DevicesInfo();
+            WindowHandlerHelper.DataReceived += WindowHandlerHelper_DataReceived;
         }
+
+        private void WindowHandlerHelper_DataReceived(object data)
+        {
+            Task.Run(async () => {
+                foreach (var item in ListPhones)
+                {
+                    item.CancelWork();
+                }
+                await Task.Delay(1000);
+                GetDevice3();
+                StartAuto();
+            });
+            
+        }
+
         public  void StartAuto()
         {
 
@@ -144,9 +167,25 @@ namespace KAutoPCApplicationBasic.ViewModel
             {
                 ListPhones.Add(new PhoneModel(item));
             }
-
-            Parallel.ForEach(ListPhones, phone => { phone.Dowork(); });
+            var tasks = new List<Task>();
+            //Parallel.ForEach(ListPhones, phone => { phone.Work(); });
+            foreach (var phone in ListPhones)
+            {
+                tasks.Add(Task.Run(() => { phone.Work(); }));
+            }
+            Task t = Task.WhenAll(tasks);
+            t.Wait();
         }
+        public void CancelAuto()
+        {
+            
+
+
+        }
+        private bool disposed = false;
+        private bool disposedValue;
+
+
         #region PropertyChange
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -158,6 +197,17 @@ namespace KAutoPCApplicationBasic.ViewModel
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~MainViewModel()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        
 
         #endregion PropertyChange
     }

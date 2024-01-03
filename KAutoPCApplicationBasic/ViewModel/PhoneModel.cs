@@ -1,12 +1,15 @@
 ﻿using KAutoPCApplicationBasic.Model;
 using KAutoPCApplicationBasic.Util;
 using KAutoPCApplicationBasic.Utils;
+using Microsoft.Win32.SafeHandles;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -18,6 +21,7 @@ namespace KAutoPCApplicationBasic.ViewModel
 {
     public class PhoneModel
     {
+        CancellationTokenSource cts;
         public string? StageLogs { get; set; }
         public string? AppRunning { get; set; }
         public bool IsRunning { get; set; } = false;
@@ -26,20 +30,46 @@ namespace KAutoPCApplicationBasic.ViewModel
         public int? Index { get; set; }
 
         LDPlayer ld = new LDPlayer();
+        private bool disposedValue;
+
         public PhoneModel(DevicesInfo device) {
             this.Devices = device;
             yolo = YoloV8Predictor.Create(Config.AIModelPath,Config.LabelArray);
+            cts = new CancellationTokenSource();
         }
-        
-        public async void Dowork()
+        public void Work()
+        {
+            Dowork(cts.Token);
+            //Couting(cts.Token);
+        }
+        public void CancelWork()
+        {
+            cts.Cancel();
+        }
+        public async void Couting(CancellationToken ct)
+        {
+            var i = 0;
+            await Task.Run(() => {
+
+                while (!ct.IsCancellationRequested)
+                {
+                    i++;
+                    Thread.Sleep(1000);
+                    Console.WriteLine(i);
+                }
+            },ct);
+        }
+        public async void Dowork(CancellationToken ct)
         {
             await Task.Run(() => {
-                //ld.Open_App("index", Devices.LD_Index.ToString(), "com.dots.connect.game.one");
+                ld.Open_App("index", Devices.LD_Index.ToString(), "com.dots.connect.game.one");
                 Task.Delay(500);
-                while (true)
+                while (!ct.IsCancellationRequested)
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(10000);
                     var matinput = Capture();
+                    if (matinput == null || matinput.Cols == 0) { continue; }
+                    
                     var resultpredict =  yolo.Predict(matinput);
                     if (resultpredict == null) {GC.Collect(); continue; }
                     if (resultpredict?.Length == 0) { GC.Collect(); continue; }
@@ -63,12 +93,13 @@ namespace KAutoPCApplicationBasic.ViewModel
                     }
                     else if (resultpredict2.Any(x => x.Label.Name.StartsWith("Browser")))
                     {
-                        HandleClickOnPos(196,212);
+                        ld.KillApp("index", Devices.LD_Index.ToString(), "com.dots.connect.game.one");
+                        Thread.Sleep(5000);
+                        ld.Open_App("index", Devices.LD_Index.ToString(), "com.dots.connect.game.one");
                     }
                     GC.Collect();
                 }
-                
-            });
+            }, ct);
         }
         public Mat Capture()
         {

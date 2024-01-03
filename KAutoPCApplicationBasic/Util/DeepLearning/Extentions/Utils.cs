@@ -25,6 +25,9 @@ namespace KAutoPCApplicationBasic.Util
 
         public static Mat ResizeImage(Mat image,int target_width,int target_height)
         {
+            if (image == null) return new Mat();
+            if (image.Width == 0) return new Mat();
+            
             return image.Resize(new OpenCvSharp.Size(target_width,target_height));
         }
 

@@ -4,19 +4,38 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using KAutoPCApplicationBasic.Util;
 using PInvoke;
 
 namespace KAutoPCApplicationBasic.Utils
 {
-
+    public delegate void DataReceivedEventHandler(string data);
     public static class WindowHandlerHelper
     {
+        
+        public static event DataReceivedEventHandler? DataReceived;
+        public static void TransmitData(string data)
+        {
+            DataReceived?.Invoke(data); // Raise the event.
+        }
         const uint MK_LBUTTON = 0x0001;
+        // Send ESC
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        public static void SendKeyBoardPress(IntPtr handle, VKeys key)
+        {
+            
+        }
+
+
+
 
         /// <summary>
         /// 
@@ -321,10 +340,11 @@ namespace KAutoPCApplicationBasic.Utils
 
             RECT rc;
             GetWindowRect(new HandleRef(null, hwnd), out rc);
-            //if (rc.Right == 0 && rc.Left==0)
-            //{
-            //    return null;
-            //}
+            if (rc.Right == 0 && rc.Left == 0)
+            {
+                WindowHandlerHelper.TransmitData("NG");
+                return null;
+            }
             Bitmap bmp = new Bitmap(rc.Right - rc.Left, rc.Bottom - rc.Top, PixelFormat.Format32bppArgb);
             Graphics gfxBmp = Graphics.FromImage(bmp);
             IntPtr hdcBitmap;
