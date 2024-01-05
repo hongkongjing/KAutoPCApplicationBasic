@@ -97,6 +97,7 @@ namespace KAutoPCApplicationBasic.ViewModel
         }
         public void ScreenShotOne()
         {
+            
             CaptureScreenAsync(DeviceSelected.HandleWindow);
         }
         public void ScreenShotAll()
@@ -122,6 +123,7 @@ namespace KAutoPCApplicationBasic.ViewModel
                 var imageHw = ScreenCapture.GetScreenshot(hwnd);
                 if (imageHw != null)
                 {
+                    
                     VisionHelper.SaveImage(imageHw, hwnd.ToString());
                 }
                 else
@@ -178,8 +180,8 @@ namespace KAutoPCApplicationBasic.ViewModel
         }
         public void CancelAuto()
         {
+            var str = LDPlayer.GetIMEI(ListDevices[0].LD_Index);
             
-
 
         }
         private bool disposed = false;

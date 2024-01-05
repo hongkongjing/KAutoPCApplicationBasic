@@ -33,7 +33,26 @@ namespace KAutoPCApplicationBasic.Utils
         {
             
         }
+        // Resize Window
+        public static bool Resize(IntPtr windowHandle, Size size)
+        {
+            if (User32.GetWindowRect(windowHandle, out PInvoke.RECT windowRect))
+            {
+                int width = windowRect.right - windowRect.left;
+                int height = windowRect.bottom - windowRect.top;
 
+                if (size.Width != width && size.Height != height)
+                {
+                    return User32.SetWindowPos(
+                      windowHandle,
+                      IntPtr.Zero,
+                      windowRect.left, windowRect.top,
+                      size.Width, size.Height, User32.SetWindowPosFlags.SWP_SHOWWINDOW);
+                }
+                return true;
+            }
+            return false;
+        }
 
 
 

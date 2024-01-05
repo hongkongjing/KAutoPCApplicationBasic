@@ -66,14 +66,18 @@ namespace KAutoPCApplicationBasic.ViewModel
                 Task.Delay(500);
                 while (!ct.IsCancellationRequested)
                 {
-                    Thread.Sleep(10000);
+                    Thread.Sleep(5000);
                     var matinput = Capture();
                     if (matinput == null || matinput.Cols == 0) { continue; }
-                    
+                    if (matinput.Width != 217)
+                    {
+                        WindowHandlerHelper.Resize(Devices.HandleWindow, new System.Drawing.Size(217, 346));
+                        matinput = Capture();
+                    }
                     var resultpredict =  yolo.Predict(matinput);
                     if (resultpredict == null) {GC.Collect(); continue; }
                     if (resultpredict?.Length == 0) { GC.Collect(); continue; }
-                    matinput.SaveImage("C:\\Users\\Bon\\Desktop\\Result\\Screenshot" +DateTime.Now.ToString("hhmmss")+".jpg");
+                    
                     var resultpredict2 = Sort(resultpredict);
                     if (resultpredict2.Any(x=>x.Label.Name.StartsWith("OpenTreasure")))
                     {

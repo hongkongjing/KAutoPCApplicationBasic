@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 
 namespace KAutoPCApplicationBasic.Util
@@ -228,7 +229,8 @@ namespace KAutoPCApplicationBasic.Util
                     Verb = "runas"
                 };
                 process.Start();
-                process.StandardInput.WriteLine($"ldconsole.exe getprop --index 5 --key phone.imei");
+                process.StandardInput.WriteLine("echo off");
+                process.StandardInput.WriteLine($"ldconsole.exe getprop --index {deviceindex} --key phone.imei");
                 process.StandardInput.Flush();
                 process.StandardInput.Close();
                 process.WaitForExit(3000);

@@ -31,6 +31,11 @@ namespace KAutoPCApplicationBasic.Util
         //    }
         //    return matimage;
         //}
+        public static Mat Resize(Mat input)
+        {
+            var size = new OpenCvSharp.Size(217, 346);
+            return input.Resize(size);
+        }
         public static void SaveImage(Bitmap bitmap,string LDname = "")
         {
             var savepath = AppDomain.CurrentDomain.BaseDirectory + @"Screenshots";
@@ -41,7 +46,8 @@ namespace KAutoPCApplicationBasic.Util
                 }
             if (mat.Cols > 0)
             {
-                mat.SaveImage($"{savepath}\\Capture{LDname}{DateTime.Now.ToString("HHmmss")}.jpg");
+                var mat2 = VisionHelper.Resize(mat.Clone());
+                mat2.SaveImage($"{savepath}\\Capture{LDname}{DateTime.Now.ToString("HHmmss")}.jpg");
             }
             
             
